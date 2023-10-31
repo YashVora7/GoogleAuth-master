@@ -43,6 +43,11 @@ app.use(express.json())
 
 const nodemailer = require('nodemailer')
 
+var otp = Math.random();
+otp = otp * 1000000;
+otp = parseInt(otp);
+console.log(otp);
+
 const transport = nodemailer.createTransport(
   {
     service: 'gmail',
@@ -60,8 +65,10 @@ app.post("/",(req,res)=>{
     from: 'officialyashvora1978@gmail.com',
     to: req.body.to,
     subject: req.body.subject,
-    text: req.body.text
+    html: `<h1>Dear Customer use this otp to SignIn/Up:</h1>`+ otp
   }
+
+  console.log(otp);
 
   transport.sendMail(mail,(err,info)=>{
     if(err){
@@ -74,6 +81,19 @@ app.post("/",(req,res)=>{
 
   res.send("NodeMail is now sent!");
 
+})
+
+
+
+app.get("/:otp",(req,res)=>{
+  const {otp} = req.params
+
+  if(otp == otp){
+    res.send("OTP Verification Done!");
+  }
+  else{
+    res.send("Error Verification");
+  }
 })
 
 
