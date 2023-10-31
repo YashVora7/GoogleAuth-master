@@ -48,15 +48,17 @@ const transport = nodemailer.createTransport(
     service: 'gmail',
     auth: {
       user: 'officialyashvora1978@gmail.com',
-      pass: 'rppr bwxv xneh miix'
+      pass: 'rpprbwxvxnehmiix'
     }
   }
 )
 
 app.post("/",(req,res)=>{
+
+  console.log(req.body);
   const mail = {
     from: 'officialyashvora1978@gmail.com',
-    to: req.body.email,
+    to: req.body.to,
     subject: req.body.subject,
     text: req.body.text
   }
