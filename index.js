@@ -1,64 +1,54 @@
-const express = require('express');
-
+const express = require("express");
 const app = express();
+app.use(express.json());
+const nodemailer = require("nodemailer");
 
-app.use(express.json())
-const nodemailer = require('nodemailer')
+// Function to generate OTP
+const generateOTP = () => {
+  let otp = Math.floor(Math.random() * 1000000);
+  console.log(otp);
+  return otp.toString();
+};
 
-var otp = Math.random();
-otp = otp * 1000000;
-otp = parseInt(otp);
-console.log(otp);
+const transport = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "officialyashvora1978@gmail.com",
+    pass: "rpprbwxvxnehmiix",
+  },
+});
 
-const transport = nodemailer.createTransport(
-  {
-    service: 'gmail',
-    auth: {
-      user: 'officialyashvora1978@gmail.com',
-      pass: 'rpprbwxvxnehmiix'
-    }
-  }
-)
-
-app.post("/",(req,res)=>{
-
+app.post("/", (req, res) => {
   console.log(req.body);
   const mail = {
-    from: 'officialyashvora1978@gmail.com',
+    from: "officialyashvora1978@gmail.com",
     to: req.body.to,
     subject: req.body.subject,
-    html: `<h1>Dear Customer use this otp to SignIn/Up:</h1>`+ otp
-  }
+    html: `<h1>Dear Customer use this OTP to Sign In/Up: ${ generateOTP()}</h1>`,
+  };
 
-  console.log(otp);
-
-  transport.sendMail(mail,(err,info)=>{
-    if(err){
+  transport.sendMail(mail, (err, info) => {
+    if (err) {
       console.log(err);
-    }
-    else{
+    } else {
       console.log(info);
     }
-  })
+  });
 
   res.send("NodeMail is now sent!");
+});
 
-})
+app.get("/:otp", (req, res) => {
+  const { otp } = req.params;
+  const generatedOTP = generateOTP();
 
-
-
-app.get("/:otp",(req,res)=>{
-  const {otp} = req.params
-
-  if(otp == otp){
+  if (otp === generatedOTP) {
     res.send("OTP Verification Done!");
-  }
-  else{
+  } else {
     res.send("Error Verification");
   }
-})
+});
 
-
-app.listen(8090,()=>{
-    console.log("listening on 8090");
-})
+app.listen(8090, () => {
+  console.log("listening on 8090");
+});
