@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 const nodemailer = require("nodemailer");
+const connect = require("./db");
+const user = require("./user.model");
 
 // Function to generate OTP
 const generateOTP = () => {
@@ -17,6 +19,16 @@ const transport = nodemailer.createTransport({
     pass: "rpprbwxvxnehmiix",
   },
 });
+
+app.post("/create",async(req,res)=>{
+  let data = await user.create(req.body)
+  res.send(data)
+})
+
+app.get("/",async(req,res)=>{
+  let data = await user.find()
+  res.send(data)
+})
 
 app.post("/", (req, res) => {
   console.log(req.body);
@@ -38,17 +50,7 @@ app.post("/", (req, res) => {
   res.send("NodeMail is now sent!");
 });
 
-app.get("/:otp", (req, res) => {
-  const { otp } = req.params;
-  const generatedOTP = generateOTP();
-
-  if (otp === generatedOTP) {
-    res.send("OTP Verification Done!");
-  } else {
-    res.send("Error Verification");
-  }
-});
-
 app.listen(8090, () => {
+  connect()
   console.log("listening on 8090");
 });
